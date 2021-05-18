@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch Lightson2",
+      "request": "launch",
+      "mainClass": "Lightson2",
+      "projectName": "lightson_77c55967"
+    },
+    {
+      "type": "java",
       "name": "Launch lightson",
       "request": "launch",
       "mainClass": "lightson",
