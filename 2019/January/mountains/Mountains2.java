@@ -3,34 +3,22 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.lang.Math;
 
-class Mountains {
+class Mountains2 {
   static List<List<Integer>> peaks = new ArrayList<>();
 
   public static int getCovered() {
-    int maxBase = -1;
+    int maxEnd = -1;
     int count = 0;
-    for (int i = 0; i < peaks.size() - 1; i++) {
-      int rightBase = peaks.get(i).get(0) + peaks.get(i).get(1);
-      if (peaks.get(i).get(0) - peaks.get(i).get(1) == peaks.get(i + 1).get(0) - peaks.get(i + 1).get(1)) {
-        // left point the same
+    for (int i = 0; i < peaks.size(); i++) {
+      int end = peaks.get(i).get(1) + peaks.get(i).get(0);
+      if (end > maxEnd) {
+        maxEnd = end;
         count++;
       }
-
-      else if (rightBase < maxBase) {
-        // right covered by max
-        count++;
-      }
-
-      maxBase = Math.max(maxBase, peaks.get(i).get(0) + peaks.get(i).get(1));
     }
 
-    if (peaks.get(peaks.size() - 1).get(0) + peaks.get(peaks.size() - 1).get(1) < maxBase) {
-      count++;
-    }
-
-    return peaks.size() - count;
+    return count;
   }
 
   public static void main(String[] args) throws IOException {
