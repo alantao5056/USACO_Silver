@@ -1,9 +1,7 @@
 import java.io.*;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Queue;
 import java.util.LinkedList;
 
@@ -28,29 +26,28 @@ class Mootube {
     }
   }
 
-  static int[][] relationships;
+  static int N;
+  static int Q;
 
   public static int findAboveK(int K, Node start) {
     Queue<Node> q = new LinkedList<>();
     int count = 0; // return this
-    Set<Integer> visited = new HashSet<>();
-    start.value = 2147483647;
+    boolean[] visited = new boolean[N + 1];
+    start.value = Integer.MAX_VALUE;
     q.add(start);
 
     while (!q.isEmpty()) {
       Node cur = q.poll();
-      visited.add(cur.id);
+      visited[cur.id] = true;
       for (Edge e : cur.next) {
         Node neighbor = e.next;
-        if (!visited.contains(neighbor.id)) {
+        if (!visited[neighbor.id]) {
           neighbor.value = Math.min(e.value, cur.value);
-          relationships[start.id][neighbor.id] = neighbor.value;
-          relationships[neighbor.id][start.id] = neighbor.value;
 
           if (neighbor.value >= K) {
             count++;
+            q.add(neighbor);
           }
-          q.add(neighbor);
         }
       }
     }
@@ -63,20 +60,15 @@ class Mootube {
     PrintWriter pr = new PrintWriter(new FileWriter("mootube.out"));
 
     StringTokenizer st = new StringTokenizer(br.readLine());
-    int N = Integer.parseInt(st.nextToken());
-    int Q = Integer.parseInt(st.nextToken());
+    N = Integer.parseInt(st.nextToken());
+    Q = Integer.parseInt(st.nextToken());
 
     Node[] nodeArr = new Node[N + 1];
-    relationships = new int[N + 1][N + 1];
-
     for (int i = 0; i < N - 1; i++) {
       st = new StringTokenizer(br.readLine());
       int a = Integer.parseInt(st.nextToken());
       int b = Integer.parseInt(st.nextToken());
       int value = Integer.parseInt(st.nextToken());
-
-      relationships[a][b] = value;
-      relationships[b][a] = value;
 
       if (nodeArr[a] == null) {
         nodeArr[a] = new Node(a);
@@ -89,25 +81,11 @@ class Mootube {
       nodeArr[b].next.add(new Edge(value, nodeArr[a]));
     }
 
-    Set<Integer> visited = new HashSet<>();
     for (int i = 0; i < Q; i++) {
       st = new StringTokenizer(br.readLine());
       int K = Integer.parseInt(st.nextToken());
       int start = Integer.parseInt(st.nextToken());
-
-      if (visited.contains(start)) {
-        // for cycle relationships
-        int count = 0;
-        for (int j : relationships[start]) {
-          if (j >= K) {
-            count++;
-          }
-        }
-        pr.println(count);
-      } else {
-        visited.add(start);
-        pr.println(findAboveK(K, nodeArr[start]));
-      }
+      pr.println(findAboveK(K, nodeArr[start]));
 
     }
 
