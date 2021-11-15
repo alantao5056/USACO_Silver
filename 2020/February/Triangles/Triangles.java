@@ -2,36 +2,57 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.StringTokenizer;
-import java.util.Map;
-import java.util.AbstractMap;
-import java.util.List;
-import java.util.Comparator;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
 public class Triangles {
   private static int N;
   private static StringTokenizer st;
   private static PrintWriter pw;
-  private static List<Map.Entry<Integer, Integer>> xy;
-  private static long[][] sumx;
-  private static long[][] sumy;
+  private static Point[] points;
+
+  public static class Point {
+    public int y;
+    public int x;
+    public long sumx;
+    public long sumy;
+
+    public Point(int x, int y) {
+      this.x = x;
+      this.y = y;
+    }
+
+    @Override
+    public String toString() {
+      return String.format("(%s, %s)", x, y);
+    }
+  }
 
   
   private static int getInt() {
     return Integer.parseInt(st.nextToken());
   }
 
-  static class MyComparator implements Comparator<Map.Entry<Integer, Integer>> {
-    public int compare(Map.Entry<Integer, Integer> c1, Map.Entry<Integer, Integer> c2) {
-      if (c1.getKey() > c2.getKey()) {
-        return 0;
+  static class sortBasedOnX implements Comparator<Point> {
+    public int compare(Point p1, Point p2) {
+      if (p1.x > p2.x) {
+        return 1;
       }
-      if (c1.getKey() == c2.getKey()) {
-        return c1.getValue() > c2.getValue() ? 0 : 1;
+      if (p1.x == p2.x) {
+        return p1.y > p2.y ? 1 : -1;
       }
-      return 1;
+      return -1;
+    }
+  }
+
+  static class sortBasedOnY implements Comparator<Point> {
+    public int compare(Point p1, Point p2) {
+      if (p1.y > p2.y) {
+        return 1;
+      }
+      if (p1.y == p2.y) {
+        return p1.x > p2.x ? 1 : -1;
+      }
+      return -1;
     }
   }
 
@@ -40,29 +61,66 @@ public class Triangles {
     pw = new PrintWriter("triangles.out");
     N = getInt();
 
-    // initializing xy array
-    xy = new ArrayList<>();
+    points = new Point[N];
 
     for (int i = 0; i < N; i++) {
-      xy.add(new AbstractMap.SimpleEntry<Integer, Integer>(getInt() + 100000, getInt() + 100000));
+      points[i] = new Point(getInt() + 10000, getInt() + 10000);
     }
 
-    // sort
-    Collections.sort(xy, new MyComparator());
-
-    // turning array into sums
-    sumx = new long[20001][20001];
-    sumy = new long[20001][20001];
-
-    for (int i = 0; i < N + 1; i++) {
+    // do y
+    Arrays.sort(points, new sortBasedOnX());
+    int i = 0;
+    while (i < N) {
+      int total = 0;
       int j = i + 1;
-      int x = xy.get(i).getKey();
-      int y = xy.get(i).getValue();
-
-      while (x != xy.get(j).getKey()) {
-        sumx[x][y] += xy.get(j).getValue() - xy.get(i).getValue();
+      while (j < N && points[i].x == points[j].x) {
+        points[i].sumy += points[j].y - points[i].y;
+        j++;
+        total++;
       }
+      j = i + 1;
+      int adds = 1 - total;
+      long prev = points[i].sumy;
+      while (j < N && points[i].x == points[j].x) {
+        points[j].sumy = prev + (points[j].y - points[j-1].y) * adds;
+        prev = points[j].sumy;
+        adds += 2;
+        j++;
+      }
+      i += total + 1;
     }
+
+    // do x
+    Arrays.sort(points, new sortBasedOnY());
+    i = 0;
+    while (i < N) {
+      int total = 0;
+      int j = i + 1;
+      while (j < N && points[i].y == points[j].y) {
+        points[i].sumx += points[j].x - points[i].x;
+        j++;
+        total++;
+      }
+      j = i + 1;
+      int adds = 1 - total;
+      long prev = points[i].sumx;
+      while (j < N && points[i].y == points[j].y) {
+        points[j].sumx = prev + (points[j].x - points[j-1].x) * adds;
+        prev = points[j].sumx;
+        adds += 2;
+        j++;
+      }
+      i += total + 1;
+    }
+
+    // get result
+    long result = 0;
+    for (int k = 0; k < N; k++) {
+      result += (points[k].sumx * points[k].sumy) % 1000000007;
+      result %= 1000000007;
+    }
+
+    pw.println(result);
 
     pw.close();
   }
