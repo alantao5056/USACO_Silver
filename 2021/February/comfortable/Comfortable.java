@@ -31,59 +31,28 @@ public class Comfortable {
         int curX = xq.poll();
         int curY = yq.poll();
 
-        int[] next = isComfortable(curX, curY);
-        if (next != null) {
-          total++;
-          int nextX = next[0];
-          int nextY = next[1];
-          xq.add(nextX);
-          yq.add(nextY);
-          grid[nextX][nextY] = true;
-        }
-
-        next = isComfortable(curX, curY+1);
-        if (next != null) {
-          total++;
-          int nextX = next[0];
-          int nextY = next[1];
-          xq.add(nextX);
-          yq.add(nextY);
-          grid[nextX][nextY] = true;
-        }
-
-        next = isComfortable(curX, curY-1);
-        if (next != null) {
-          total++;
-          int nextX = next[0];
-          int nextY = next[1];
-          xq.add(nextX);
-          yq.add(nextY);
-          grid[nextX][nextY] = true;
-        }
-
-        next = isComfortable(curX+1, curY);
-        if (next != null) {
-          total++;
-          int nextX = next[0];
-          int nextY = next[1];
-          xq.add(nextX);
-          yq.add(nextY);
-          grid[nextX][nextY] = true;
-        }
-
-        next = isComfortable(curX-1, curY);
-        if (next != null) {
-          total++;
-          int nextX = next[0];
-          int nextY = next[1];
-          xq.add(nextX);
-          yq.add(nextY);
-          grid[nextX][nextY] = true;
-        }
+        total+=checkAndAdd(xq, yq, curX, curY);
+        total+=checkAndAdd(xq, yq, curX, curY+1);
+        total+=checkAndAdd(xq, yq, curX, curY-1);
+        total+=checkAndAdd(xq, yq, curX+1, curY);
+        total+=checkAndAdd(xq, yq, curX-1, curY);
       }
       System.out.println(total);
     }
     sc.close();
+  }
+
+  private static int checkAndAdd(Queue<Integer> xq, Queue<Integer> yq, int curX, int curY) {
+    int[] next = isComfortable(curX, curY);
+    if (next != null) {
+      int nextX = next[0];
+      int nextY = next[1];
+      xq.add(nextX);
+      yq.add(nextY);
+      grid[nextX][nextY] = true;
+      return 1;
+    }
+    return 0;
   }
 
   private static int[] isComfortable(int x, int y) {
@@ -101,9 +70,8 @@ public class Comfortable {
     if (!grid[x-1][y]) {nextX = x-1; nextY = y;}
     else around++;
 
-    int[] result = new int[2];
-
     if (around == 3) {
+      int[] result = new int[2];
       result[0] = nextX;
       result[1] = nextY;
       return result;
