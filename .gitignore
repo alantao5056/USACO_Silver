@@ -1,0 +1,10 @@
+**/__pycache__
+**/test/*_actual.out
+**/.idea
+**/.vscode
+**/out
+**/.metadata
+**/.project
+**/.classpath
+**/.settings
+**/.class
