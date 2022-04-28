@@ -1,0 +1,4 @@
+INDEX VERSION 1.131+C:\git\tj-usaco\USACO_Silver\.metadata\.plugins\org.eclipse.jdt.core
+1865797976.index
+1053717757.index
+427483732.index
