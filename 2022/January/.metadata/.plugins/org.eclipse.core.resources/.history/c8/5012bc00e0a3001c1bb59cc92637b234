@@ -1,0 +1,83 @@
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.Stack;
+
+public class Cereal2 {
+  public static void main(String[] args) throws Exception {
+    Scanner sc = new Scanner(new java.io.File("1.in"));
+//    Scanner sc = new Scanner(System.in);
+    
+    int N = sc.nextInt();
+    int M = sc.nextInt();
+    
+    // read and init cereals
+    Cereal[] cereals = new Cereal[M+1];
+    for (int i = 1; i < N+1; i++) {
+      int a = sc.nextInt();
+      int b = sc.nextInt();
+      if (cereals[a] == null) {
+        cereals[a] = new Cereal(a);
+      }
+      if (cereals[b] == null) {
+        cereals[b] = new Cereal(b);
+      }
+      cereals[a].neighbors.add(cereals[b]);
+      cereals[b].neighbors.add(cereals[a]);
+      cereals[a].neighborCows.add(i);
+      cereals[b].neighborCows.add(i);
+    }
+    
+    // find groups
+    List<Cereal> groups = new ArrayList<>();
+    boolean[] visited = new boolean[M+1];
+    for (int i = 1; i < M; i++) {
+      if (cereals[i] != null && !visited[i]) {
+        groups.add(cereals[i]);
+        
+        Stack<Cereal> q = new Stack<>();
+        q.add(cereals[i]);
+        cereals[i].visited = true;
+        
+        while (!q.isEmpty()) {
+          Cereal curCereal = q.peek();
+          
+          for (var n : curCereal.neighbors) {
+            if (!n.visited) {
+              q.add(n);
+              n.visited = true;
+            }
+          }
+        }
+      }
+    }
+    
+    sc.close();
+  }
+  
+  private static int processGroup(Cereal startCereal, List<Integer> order) {
+    
+  }
+  
+  private static class Cereal {
+    int id;
+    List<Cereal> neighbors = new ArrayList<>();
+    Set<Integer> neighborCows = new HashSet<>();
+    boolean visited = false;
+    int nbsIndex = 0;
+    
+    public Cereal(int id) {
+      this.id = id;
+    }
+    
+    int getNextCowIdx() {
+      while (nbsIndex < neighborCows.size() && neighbors.get(nbsIndex).visited) {
+        return neighbors.get(nbsIndex++);
+      }
+    }
+  }
+}
