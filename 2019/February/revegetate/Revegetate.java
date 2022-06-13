@@ -1,58 +1,64 @@
-import java.io.FileWriter;
+import java.util.*;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
 
 public class Revegetate {
+  static int N;
+  static int M;
+
   public static void main(String[] args) throws Exception {
     Scanner sc = new Scanner(new java.io.File("revegetate.in"));
-    PrintWriter pw = new PrintWriter(new FileWriter("revegetate.out"));
+    PrintWriter pw = new PrintWriter("revegetate.out");
+    // Scanner sc = new Scanner(System.in);
 
-    int N = sc.nextInt();
-    int M = sc.nextInt();
+    N = sc.nextInt();
+    M = sc.nextInt();
 
-    ArrayList<Integer>[] cows = new ArrayList[N+1];
-
-    for (int i = 1; i < N+1; i++) {
-      cows[i] = new ArrayList<>();
-    }
+    List<Integer>[] connection = new ArrayList[N+1];
 
     for (int i = 0; i < M; i++) {
       sc.next();
       int a = sc.nextInt();
       int b = sc.nextInt();
 
-      cows[a].add(b);
-      cows[b].add(a);
+      if (connection[a] == null) {
+        connection[a] = new ArrayList<>();
+      }
+      connection[a].add(b);
+
+      if (connection[b] == null) {
+        connection[b] = new ArrayList<>();
+      }
+      connection[b].add(a);
     }
 
-    // get the groups
-
-    boolean[] visited = new boolean[N + 1];
-    int groups = 0;
+    // find groups
+    int[] groups = new int[N+1];
+    int curGroupNum = 0;
 
     for (int i = 1; i < N+1; i++) {
-      if (visited[i]) continue;
-      groups++;
-      Queue<Integer> q = new LinkedList<>();
+      if (groups[i] != 0) continue;
+      curGroupNum++;
+
+      ArrayDeque<Integer> q = new ArrayDeque<>();
       q.add(i);
+      groups[i] = curGroupNum;
 
       while (!q.isEmpty()) {
         int cur = q.poll();
-        visited[cur] = true;
-        for (int n : cows[cur]) {
-          if (!visited[n]) q.add(n);
+
+        if (connection[cur] == null) continue;
+        for (int n : connection[cur]) {
+          if (groups[n] == 0) {
+            groups[n] = curGroupNum;
+            q.add(n);
+          }
         }
       }
     }
-
-    pw.print("1");
-    for (int i = 0; i < groups; i++) {
-      pw.print("0");
+    pw.print(1);
+    for (int i = 0; i < curGroupNum; i++) {
+      pw.print(0);
     }
-
     pw.println();
 
     pw.close();
