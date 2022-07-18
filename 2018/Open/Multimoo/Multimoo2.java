@@ -2,9 +2,14 @@ import java.io.PrintWriter;
 import java.io.File;
 import java.util.*;
 
+/**
+ * bfs
+ */
+
 public class Multimoo2 {
   static int N;
   static int[][] grid;
+  static boolean[][] visited;
 
   public static void main(String[] args) throws Exception {
     // read input
@@ -21,7 +26,7 @@ public class Multimoo2 {
       }
     }
 
-    boolean[][] visited = new boolean[N+2][N+2];
+    visited = new boolean[N+2][N+2];
     // iterate all groups using flood fill
     int maxSize = 0;
 
@@ -93,6 +98,12 @@ public class Multimoo2 {
         if (rightTeamNum != downTeamNum && downTeamNum != grid[i][j] && downTeamNum != 0) {
           maxTotalSize = Math.max(maxTotalSize, getMaxSize(i, j, i+1, j));
         }
+
+        if (maxTotalSize == N*N) {
+          pw.println(maxTotalSize);
+          pw.close();
+          return;
+        }
       }
     }
 
@@ -103,7 +114,7 @@ public class Multimoo2 {
   }
 
   private static int getMaxSize(int i1, int j1, int i2, int j2) {
-    boolean[][] visited = new boolean[N+2][N+2];
+    resetVisited();
 
     int teamNum1 = grid[i1][j1];
     int teamNum2 = grid[i2][j2];
@@ -147,5 +158,11 @@ public class Multimoo2 {
     }
 
     return size;
+  }
+
+  private static void resetVisited() {
+    for (int i = 1; i < N+1; i++) {
+      Arrays.fill(visited[i], false);
+    }
   }
 }
