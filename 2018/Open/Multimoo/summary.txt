@@ -1,0 +1,4 @@
+bfs is pretty much the same as dfs (a little worse)
+dfs might overflow
+
+if you want multiple visited arr of the same size, change the values, not create a new one
