@@ -1,0 +1,3 @@
+just find out where the numbers are supposed to go after sorting, and calculate the number of steps
+
+the maximum step is the answer
